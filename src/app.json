@@ -1,0 +1,6 @@
+{
+  "name": "google-action-blip-sample",
+  "description": "Sample application to show how create a bot using Google Action and BLiP Plataform",
+  "repository": "https://github.com/ravpacheco/google-action-blip-sample.git",
+  "keywords": ["google actions", "api.ai", "blip", "text-to-speech", "speech-to-text"]
+}
