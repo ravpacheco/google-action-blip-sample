@@ -8,11 +8,12 @@
   },
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
     "lime-transport-websocket": "^2.0.2",
     "messaginghub-client": "^3.4.1",
     "request": "^2.81.0",
     "request-promise": "^4.2.1",
-    "body-parser": "^1.15.0",
-    "express": "^4.13.4"
+    "robotjs": "^0.4.7"
   }
 }
