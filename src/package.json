@@ -3,13 +3,16 @@
   "name": "google-action-blip-sample",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "prestart": "npm install"
   },
   "license": "MIT",
   "dependencies": {
     "lime-transport-websocket": "^2.0.2",
     "messaginghub-client": "^3.4.1",
     "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request-promise": "^4.2.1",
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4"
   }
 }

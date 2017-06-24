@@ -1,92 +1,92 @@
 /* eslint-disable no-console */
 'use strict';
 
-let Lime = require('lime-js');
-let WebSocketTransport = require('lime-transport-websocket');
-let MessagingHub = require('messaginghub-client');
-let request = require('request-promise');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-// These are the MessagingHub credentials for this bot.
-// If you want to create your own bot, see http://blip.ai
-const IDENTIFIER = 'your-id';
-const ACCESS_KEY = 'your-pass';
+const restService = express();
 
-// instantiate and setup client
-let client = new MessagingHub.ClientBuilder()
-    .withIdentifier(IDENTIFIER)
-    .withAccessKey(ACCESS_KEY)
-    .withTransportFactory(() => new WebSocketTransport())
-    .build();
+restService.use(bodyParser.urlencoded({
+    extended: true
+}));
 
-let lastAnswerForUser = {};
+restService.use(bodyParser.json());
 
-client.addMessageReceiver(() => true, (m) => {
-    console.log('Receiver 1');
-    console.log(m);
-    return true;
+restService.post('/echo', function (req, res) {
+    var speech = req.body.result &&
+        req.body.result.parameters &&
+        req.body.result.parameters.echoText ?
+        req.body.result.parameters.echoText :
+        "Seems like some problem. Speak again."
+
+    var action = '';
+
+    switch (action) {
+        case '1':
+            break;
+
+        case '2':
+            processMessengerRequest();
+            break;
+
+        default:
+            break;
+    }
+
+    return res.json({
+        speech: speech,
+        displayText: speech,
+        source: 'webhook-echo-sample'
+    });
 });
 
-client.addMessageReceiver(() => true, (m) => {
-    console.log('Receiver 2');
-    if (m.type !== 'text/plain') return;
+function processMessengerRequest() {
+    
+    let Lime = require('lime-js');
+    let WebSocketTransport = require('lime-transport-websocket');
+    let MessagingHub = require('messaginghub-client');
+    let request = require('request-promise');
 
-    console.log(`<< ${m.from}: ${m.content}`);
+    // These are the MessagingHub credentials for this bot.
+    // If you want to create your own bot, see http://blip.ai
+    const IDENTIFIER = 'your-id';
+    const ACCESS_KEY = 'your-pass';
+    const MY_MESSENGER_NODE = 'X@gw.messenger';
 
-    if (m.content.indexOf('word') !== -1) {
-        registerAction({ category: 'User', action: 'asked for word' });
-    }
+    // instantiate and setup client
+    let client = new MessagingHub.ClientBuilder()
+        .withIdentifier(IDENTIFIER)
+        .withAccessKey(ACCESS_KEY)
+        .withTransportFactory(() => new WebSocketTransport())
+        .build();
 
-    switch (lastAnswerForUser[m.from]) {
-    case undefined:
-        registerAction({ category: 'User', action: 'first request' });
-        break;
-    case false:
-        registerAction({ category: 'User', action: 'asked again after denial' });
-        break;
-    default:
-        registerAction({ category: 'User', action: 'asked again after answer' });
-        break;
-    }
+    // connect to the MessagingHub server
+    client.connect()
+        .then(() => {
 
-    // 50% chance of denying the request
-    if (Math.random() < 0.5) {
-        console.log(`!> No, ${m.from}!`);
-        lastAnswerForUser[m.from] = false;
-        registerAction({ category: 'Bot', action: 'denied' });
-        return;
-    }
-
-    // answer with a random word
-    request
-        .get(API_ENDPOINT)
-        .then((res) => {
             let message = {
-                id: Lime.Guid(),
-                type: 'text/plain',
-                content: res,
-                to: m.from
-            };
-            console.log(`>> ${message.to}: ${message.content}`);
-            lastAnswerForUser[m.from] = res;
-            registerAction({ category: 'Bot', action: 'answered' });
+
+            }
+
             client.sendMessage(message);
         })
         .catch((err) => console.error(err));
+}
+
+//remove this
+restService.post('/slack-test', function (req, res) {
+
+    var slack_message = {}
+    return res.json({
+        speech: "speech",
+        displayText: "speech",
+        source: 'webhook-echo-sample',
+        data: {
+            "slack": slack_message
+        } 
+    });
 });
 
-// connect to the MessagingHub server
-client.connect()
-    .then(() => console.log('Listening...'))
-    .catch((err) => console.error(err));
-
-// analytics helper functions
-function registerAction(resource) {
-    return client.sendCommand({
-        id: Lime.Guid(),
-        method: Lime.CommandMethod.SET,
-        type: 'application/vnd.iris.eventTrack+json',
-        uri: '/event-track',
-        resource: resource
-    })
-        .catch(e => console.log(e));
-}
+restService.listen((process.env.PORT || 8000), function () {
+    console.log("Listening...");
+});
