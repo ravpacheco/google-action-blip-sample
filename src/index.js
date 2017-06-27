@@ -5,7 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const restService = express();
-const affirmativeAnswers = ['Yes.', 'Yes Sr.', 'Of course.', 'Ok.', 'Its done.'];
+const affirmativeAnswers = ['Yes.', 'Yes Sir.', 'Of course.', 'Ok.', 'Its done.'];
 
 restService.use(bodyParser.urlencoded({
     extended: true
@@ -47,8 +47,28 @@ restService.post('/action', function (req, res) {
             break;
 
         case 'Photos':
-            processMessengerRequest();
+
+            let photoType = req.body.result &&
+                req.body.result.parameters &&
+                req.body.result.parameters['photo-type'] &&
+                req.body.result.parameters['photo-type'] !== '' ?
+                req.body.result.parameters['photo-type'].toLowerCase() :
+                'beautiful';
+
+            processExternalMessenges('messenger', photoType);
             speech += ' Your photo was sent to your messenger account';
+            break;
+
+        case 'Email':
+
+            let emailSentence = req.body.result &&
+                req.body.result.parameters &&
+                req.body.result.parameters['email-sentence'] ?
+                req.body.result.parameters['email-sentence'].toLowerCase() :
+                'Some thing is wrong!';
+
+            processExternalMessenges('email', emailSentence);
+            speech += ' Your email was sent!';
             break;
 
         default:
@@ -85,7 +105,7 @@ function processCommand(target, operation) {
     }
 }
 
-function processMessengerRequest() {
+function processExternalMessenges(channel, params) {
 
     let Lime = require('lime-js');
     let WebSocketTransport = require('lime-transport-websocket');
@@ -97,6 +117,7 @@ function processMessengerRequest() {
     const IDENTIFIER = 'jamesassistant';
     const ACCESS_KEY = 'UndDU0todkg3OHV2UlIzVXRxNG0=';
     const MY_MESSENGER_NODE = '1391455114223371@messenger.gw.msging.net';
+    const MY_EMAIL_NODE = 'ravpacheco%40gmail.com@mailgun.gw.msging.net';
 
     // instantiate and setup client
     let client = new MessagingHub.ClientBuilder()
@@ -109,24 +130,37 @@ function processMessengerRequest() {
     client.connect()
         .then(() => {
 
-            let message = {
+            let message = buildMessageByChannel(channel, params)
+
+            client.sendMessage(message);
+            client.close();
+        })
+        .catch((err) => console.error(err));
+
+    function buildMessageByChannel(channel, _content) {
+        if (channel === 'messenger') {
+            return {
                 id: Lime.Guid(),
                 to: MY_MESSENGER_NODE,
                 type: "application/vnd.lime.media-link+json",
                 content: {
                     title: "Gato",
-                    text: "Segue uma imagem de um gato",
+                    text: "Segue a imagem de um gato",
                     type: "image/jpeg",
                     uri: "http://2.bp.blogspot.com/-pATX0YgNSFs/VP-82AQKcuI/AAAAAAAALSU/Vet9e7Qsjjw/s1600/Cat-hd-wallpapers.jpg",
                     previewUri: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS8qkelB28RstsNxLi7gbrwCLsBVmobPjb5IrwKJSuqSnGX4IzX",
                     previewType: "image/jpeg"
                 }
             }
-
-            client.sendMessage(message);
-            client.close();
-        })
-        .catch((err) => console.error(err));
+        } else {
+            return {
+                id: Lime.Guid(),
+                to: MY_EMAIL_NODE,
+                type: "text/plain",
+                content: _content,
+            };
+        }
+    }
 }
 
 restService.listen((process.env.PORT || 8000), function () {
