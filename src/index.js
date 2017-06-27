@@ -27,7 +27,7 @@ restService.post('/action', function (req, res) {
 
     switch (intentName) {
         case 'Present':
-            speech = 'Hello everybody. My name is James. I was created by Rafael to help him present to you some features of Google Actions, Home and BLiP Plataform';
+            speech = 'Hello everybody. My name is James. I was created by Rafael to help him presents some features of Google Actions, Home and BLiP Platform';
             break;
 
         case 'Command-Keyboard':
