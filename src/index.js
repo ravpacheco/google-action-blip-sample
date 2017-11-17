@@ -9,7 +9,7 @@ let desktopControl = require('./desktopControl');
 let BlipHttpClient = require('./blip/BlipHttpClient');
 
 const restService = express();
-let currentNumberGenie = -1;
+let numberGenie = -1;
 
 restService.use(bodyParser.urlencoded({
     extended: true
@@ -22,11 +22,10 @@ restService.post('/action', function (req, res) {
     var intentName = utils.getIntentNameFromRequest(req);
     var speech = utils.getRandomAffirmativeAnswer();
 
-    let blipHttpClient = new BlipHttpClient('Ym90c2JyYXNpbGNvbmY6QTE4MjBEUHFmZXVKNjI2c3VYOWw='); 
+    let blipHttpClient = new BlipHttpClient('amFjazE6cHhBbUFVM0s5Z2V5YWM2QndBZjU='); 
 
     switch (intentName) {
         case 'Broadcast':
-
             var m = utils.getSurveyMessage();
             blipHttpClient.sendMessage(m);
             break;
@@ -36,13 +35,12 @@ restService.post('/action', function (req, res) {
             break;
 
         case 'Command-Run':
-            let command = utils.getParameterFromRequest(req, 'command', 'notepad')
+            let command = utils.getParameterFromRequest(req, 'command', 'notepad').toLowerCase();
             desktopControl.processRunCommand(command);
             break;
 
         case 'Command-Keyboard':
-
-            let keyName = utils.getParameterFromRequest(req, 'keyboard-key', 'rigth')
+            let keyName = utils.getParameterFromRequest(req, 'keyboard-key', 'rigth').toLowerCase();
             desktopControl.processKeyboardCommand(keyName);
             break;
 
@@ -50,17 +48,20 @@ restService.post('/action', function (req, res) {
             desktopControl.processMouseCommand();
             break;
 
+        case 'Type':
+            let text = utils.getParameterFromRequest(req, 'text', 'Some text').toLowerCase();
+            desktopControl.processTextCommand(text);
+            break;
+
         case 'Photos':
 
-            let photoType = utils.getParameterFromRequest(req, 'photo-type', 'beautiful');
-            var m = utils.getSurveyMessage();
+            var m = utils.getMediaMessage();
             blipHttpClient.sendMessage(m);
             speech += ' Your photo was sent to your messenger account';
             break;
 
         case 'Email':
-
-            let emailSentence = utils.getParameterFromRequest(req, 'email-sentence', 'Default value!')
+            let emailSentence = utils.getParameterFromRequest(req, 'email-sentence', 'Default value!').toLowerCase();
 
             var m = utils.getPlainTextMessage(emailSentence, utils.MY_EMAIL);
             blipHttpClient.sendMessage(m);
@@ -69,17 +70,19 @@ restService.post('/action', function (req, res) {
             break;
 
         case 'Number-Genie':
-            currentNumberGenie = utils.getPositiveRandomNumber(50);
+            numberGenie = utils.getPositiveRandomNumber(10);
             break;
 
         case 'Number-Genie-Answer':
-            let numberGenie = utils.getParameterFromRequest(req, 'number', -1)
-            if(numberGenie == currentNumberGenie){
-
-            }else if(numberGenie > currentNumberGenie){
-
+            let currentNumberGenie = utils.getParameterFromRequest(req, 'number', -1)
+            if(currentNumberGenie == -1){
+                speech = 'Sorry try again. I didn\'t get your number';
+            }else if(numberGenie == currentNumberGenie){
+                speech = 'Wow, perfect. You are right. The number correct is: ' + currentNumberGenie;
             }else if(numberGenie < currentNumberGenie){
-                
+                speech = 'No, the number is less than ' + currentNumberGenie;
+            }else if(numberGenie > currentNumberGenie){
+                speech = 'No, the number is greater than ' + currentNumberGenie;
             }
             break;
 

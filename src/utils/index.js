@@ -1,9 +1,9 @@
 
 let Lime = require('lime-js');
 
-const MY_MESSENGER_IDENTIFIER = "128271320123982@messenger.gw.msging.net";
-const MY_EMAIL = "ravpacheco%40@mailgun.gw.msging.net";
-const MESSENGER_BROADCAST_LIST = "botsbrasilconf+senders@broadcast.msging.net";
+const MY_MESSENGER_IDENTIFIER = "1639720059374062@messenger.gw.msging.net";
+const MY_EMAIL = "ravpacheco%40gmail.com@mailgun.gw.msging.net";
+const MESSENGER_BROADCAST_LIST = "jack+senders@broadcast.msging.net";
 const affirmativeAnswers = ['Yes.', 'Yes Sir.', 'Of course.', 'Ok.', 'Its done.'];
 
 module.exports = {
@@ -33,7 +33,7 @@ module.exports = {
         req.body.result.parameters &&
         req.body.result.parameters[key] &&
         req.body.result.parameters[key] !== '' ?
-        req.body.result.parameters[key].toLowerCase() :
+        req.body.result.parameters[key] :
         defaultValue;
 
         return parameter;
@@ -41,11 +41,29 @@ module.exports = {
 
     getPlainTextMessage: function(text, to){
         return {
-            "id": Lime.Guid(),
             "to": to,
+            "from": "jack@msging.net",
             "type": "text/plain",
             "content": text
         }
+    },
+
+    getMediaMessage: function(){
+        return {
+            id: Lime.Guid(),
+            type: "application/vnd.lime.media-link+json",
+            to: MY_MESSENGER_IDENTIFIER,
+            content: {
+              title: "Cat",
+              text: "Here is a cat image for you!",
+              type: "image/jpeg",
+              uri: "http://2.bp.blogspot.com/-pATX0YgNSFs/VP-82AQKcuI/AAAAAAAALSU/Vet9e7Qsjjw/s1600/Cat-hd-wallpapers.jpg",
+              aspectRatio: "1:1",
+              size: 227791,
+              previewUri: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcS8qkelB28RstsNxLi7gbrwCLsBVmobPjb5IrwKJSuqSnGX4IzX",
+              previewType: "image/jpeg"
+            }
+        };
     },
 
     getSurveyMessage: function(){

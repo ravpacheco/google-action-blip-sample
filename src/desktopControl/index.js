@@ -7,6 +7,11 @@ module.exports = {
         robot.keyTap(command);
     },
 
+    processTextCommand: function (textCommand){
+        console.log(textCommand);
+        robot.typeString(textCommand);
+    },
+
     processMouseCommand: function(){
         // Speed up the mouse.
         robot.setMouseDelay(4);
@@ -25,15 +30,26 @@ module.exports = {
     processRunCommand: function (command){
         
         switch(command){
-            case 'Notepad':
-                robot.keyTap(command);
+            case 'notepad':
+                robot.keyTap('r', ['command']);
+                robot.typeString('notepad');
+                robot.keyTap('enter');
                 break;
-            case 'Code':
-                robot.keyTap(command);
+            case 'paint':
+                robot.keyTap('r', ['command']);
+                robot.typeString('mspaint');
+                robot.keyTap('enter');
                 break;
-            case 'Chrome':
-                robot.keyTap(command);
-            break;
+            case 'chrome':
+                robot.keyTap('r', ['command']);
+                robot.typeString('chrome');
+                robot.keyTap('enter');
+                break;
+            case 'shell':
+                robot.keyTap('r', ['command']);
+                robot.typeString('cmd');
+                robot.keyTap('enter');
+                break;
         }
     },
 
