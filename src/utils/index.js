@@ -72,7 +72,7 @@ module.exports = {
             "to": MESSENGER_BROADCAST_LIST,
             "type":"application/vnd.lime.select+json",
             "content":{
-                "text":"Qual nota vc dá para a palestra de 1 a 5 (onde 1 é ruim e 5 é ótimo) 🤔. Vote clicando em um dos botões abaixo: ⬇",
+                "text":"Aqui estão os slides da palestra https://goo.gl/21eiEB 😉\n\n. Aproveitando, qual nota vc dá para a apresentação de 1 a 5 (onde 1 é ruim e 5 é ótimo) 🤔. Vote clicando em um dos botões abaixo: ⬇",
                 "scope": "immediate",
                 "options":[
                     {
