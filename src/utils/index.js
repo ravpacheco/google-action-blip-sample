@@ -3,7 +3,7 @@ let Lime = require('lime-js');
 
 const MY_MESSENGER_IDENTIFIER = "1639720059374062@messenger.gw.msging.net";
 const MY_EMAIL = "ravpacheco%40gmail.com@mailgun.gw.msging.net";
-const MESSENGER_BROADCAST_LIST = "jack+senders@broadcast.msging.net";
+const MESSENGER_BROADCAST_LIST = "jack1+senders@broadcast.msging.net";
 const affirmativeAnswers = ['Yes.', 'Yes Sir.', 'Of course.', 'Ok.', 'Its done.'];
 
 module.exports = {
@@ -41,10 +41,10 @@ module.exports = {
 
     getPlainTextMessage: function(text, to){
         return {
-            "to": to,
-            "from": "jack@msging.net",
-            "type": "text/plain",
-            "content": text
+            id: Lime.Guid(),
+            to: to,
+            type: "text/plain",
+            content: text
         }
     },
 
@@ -68,11 +68,11 @@ module.exports = {
 
     getSurveyMessage: function(){
         return {  
-            "id": Lime.Guid(),
-            "to": MESSENGER_BROADCAST_LIST,
-            "type":"application/vnd.lime.select+json",
-            "content":{
-                "text":"Aqui estão os slides da palestra https://goo.gl/21eiEB 😉\n\n. Aproveitando, qual nota vc dá para a apresentação de 1 a 5 (onde 1 é ruim e 5 é ótimo) 🤔. Vote clicando em um dos botões abaixo: ⬇",
+            id: Lime.Guid(),
+            to: MESSENGER_BROADCAST_LIST,
+            type:"application/vnd.lime.select+json",
+            content:{
+                "text":"Aqui estão os slides da palestra https://goo.gl/21eiEB 😉\n\nAproveitando, qual nota vc dá para a apresentação de 1 a 5 (onde 1 é ruim e 5 é ótimo) 🤔. Vote clicando em um dos botões abaixo: ⬇",
                 "scope": "immediate",
                 "options":[
                     {

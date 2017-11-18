@@ -71,6 +71,8 @@ restService.post('/action', function (req, res) {
 
         case 'Number-Genie':
             numberGenie = utils.getPositiveRandomNumber(10);
+
+            speech += ' I get a number. Do you know what is this number ?'
             break;
 
         case 'Number-Genie-Answer':
